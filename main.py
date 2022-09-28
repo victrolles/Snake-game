@@ -31,6 +31,7 @@ class Game:
         running = True
         self.pause = False
         self.over = False
+        self.win = False
         
         while running:
 
@@ -48,6 +49,13 @@ class Game:
                         if event.key == K_RETURN:
                             pygame.mixer.music.unpause()
                             self.over = False
+                    elif self.win:
+                        if event.key == K_ESCAPE:
+                            running = False
+                        
+                        if event.key == K_RETURN:
+                            pygame.mixer.music.unpause()
+                            self.win = False
                     else:
                         if event.key == K_UP:
                             self.snake.move_up()
@@ -70,12 +78,12 @@ class Game:
             if self.pause:
                 self.game_paused()
 
-            if not self.pause and not self.over:
+            if not self.pause and not self.over and not self.win:
                 self.play()
 
             
 
-            time.sleep(0.2)
+            time.sleep(0.17)
 
 
 
@@ -100,9 +108,14 @@ class Game:
                 break
 
         # snake colliding with the boundries of the window
-        if not (0 <= self.snake.x[0] <= SIZE_SCREEN[0] and 0 <= self.snake.y[0] <= SIZE_SCREEN[1]):
+        if not (0 <= self.snake.x[0] < SIZE_SCREEN[0] and 0 <= self.snake.y[0] < SIZE_SCREEN[1]):
             self.play_sound('crash')
             self.game_over()
+
+        # victory
+        if self.snake.length == int((SIZE_SCREEN[0]*SIZE_SCREEN[1])/(SIZE*SIZE)):    
+            self.play_sound("win")
+            self.game_win()
 
     def game_over(self):
         self.save_score_in_DB()
@@ -120,6 +133,24 @@ class Game:
         pygame.mixer.music.pause()
 
         self.over = True
+        self.reset()
+
+    def game_win(self):
+        self.save_score_in_DB()
+        
+        self.render_background()
+        font = pygame.font.SysFont('arial',30)
+        line1 = font.render(f"You win!!!!!!!! Your score is {self.snake.length}", True, (255,255,255))
+        self.surface.blit(line1, (200,300))
+        line2 = font.render(f"The best score is {self.best_score()}", True, (255,255,255))
+        self.surface.blit(line2, (200,350))
+        line2 = font.render(f"To play again press Enter. To exit press ESC", True, (255,255,255))
+        self.surface.blit(line2, (200,400))
+
+        pygame.display.flip()
+        pygame.mixer.music.pause()
+
+        self.win = True
         self.reset()
 
     def game_paused(self):
