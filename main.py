@@ -169,6 +169,7 @@ class Game:
         font = pygame.font.SysFont('arial',30)
         score = font.render(f"Score: {self.snake.length}", True, (255,255,255))
         self.surface.blit(score,(800,10))
+        pygame.display.flip()
 
     def save_score_in_DB(self):
         database_file = open("resources/database.txt","a")
@@ -277,7 +278,7 @@ class Apple:
             for i in range(snake.length):
                 if self.x == snake.x[i] and self.y == snake.y[i]:
                     available_place = False
-                    print(available_place)
+        self.draw()
 
 class Button():
     def __init__(self,x,y,image,scale):
