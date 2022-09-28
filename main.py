@@ -97,7 +97,7 @@ class Game:
         #snake colliding with apple
         if self.is_collision(self.snake.x[0], self.snake.y[0], self.apple.x, self.apple.y):
             self.play_sound("ding")
-            self.apple.move()
+            self.apple.move(self.snake)
             self.snake.increase_length()
 
         #snake colliding with itself
@@ -268,18 +268,16 @@ class Apple:
         self.parent_screen.blit(self.image,(self.x,self.y))
         pygame.display.flip()
 
-    def move(self):
-        #available_place = False
-        #while not available_place:
-        #    available_place = True
-        #    self.x = random.randint(0,SIZE_SCREEN[0]/SIZE-1)*SIZE
-        #    self.y = random.randint(0,SIZE_SCREEN[1]/SIZE-1)*SIZE
-        #    for i in range(0,self.sna):
-        #        if self.x == Snake.x[i] or self.y == Snake.y[i]:
-        #            available_place = False
-        
-        self.x = random.randint(0,SIZE_SCREEN[0]/SIZE-1)*SIZE
-        self.y = random.randint(0,SIZE_SCREEN[1]/SIZE-1)*SIZE
+    def move(self,snake):
+        available_place = False
+        while not available_place:
+            available_place = True
+            self.x = random.randint(0,SIZE_SCREEN[0]/SIZE-1)*SIZE
+            self.y = random.randint(0,SIZE_SCREEN[1]/SIZE-1)*SIZE
+            for i in range(snake.length):
+                if self.x == snake.x[i] and self.y == snake.y[i]:
+                    available_place = False
+                    print(available_place)
 
 class Button():
     def __init__(self,x,y,image,scale):
