@@ -34,8 +34,6 @@ class Game:
         
         while running:
 
-            print(self.pause)
-            print("--------")
             for event in pygame.event.get():
                 if event.type == KEYDOWN:
 
@@ -99,6 +97,7 @@ class Game:
             if self.is_collision(self.snake.x[0], self.snake.y[0], self.snake.x[i], self.snake.y[i]):
                 self.play_sound("crash")
                 self.game_over()
+                break
 
         # snake colliding with the boundries of the window
         if not (0 <= self.snake.x[0] <= SIZE_SCREEN[0] and 0 <= self.snake.y[0] <= SIZE_SCREEN[1]):
@@ -117,8 +116,8 @@ class Game:
         pygame.display.flip()
         pygame.mixer.music.pause()
 
-        self.reset()
         self.over = True
+        self.reset()
 
     def game_paused(self):
         self.render_background()
