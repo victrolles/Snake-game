@@ -1,8 +1,8 @@
-from turtle import width
 import pygame
 import time
 import random
 
+from datetime import datetime
 from pygame.locals import *
 
 SIZE = 40
@@ -105,13 +105,16 @@ class Game:
             self.game_over()
 
     def game_over(self):
+        self.save_score_in_DB()
+        
         self.render_background()
-
         font = pygame.font.SysFont('arial',30)
         line1 = font.render(f"Game is over! Your score is {self.snake.length}", True, (255,255,255))
         self.surface.blit(line1, (200,300))
-        line2 = font.render(f"To play again press Enter. To exit press ESC", True, (255,255,255))
+        line2 = font.render(f"The best score is {self.best_score()}", True, (255,255,255))
         self.surface.blit(line2, (200,350))
+        line2 = font.render(f"To play again press Enter. To exit press ESC", True, (255,255,255))
+        self.surface.blit(line2, (200,400))
 
         pygame.display.flip()
         pygame.mixer.music.pause()
@@ -131,11 +134,23 @@ class Game:
         pygame.display.flip()
         pygame.mixer.music.pause()
 
-
     def display_score(self):
         font = pygame.font.SysFont('arial',30)
         score = font.render(f"Score: {self.snake.length}", True, (255,255,255))
         self.surface.blit(score,(800,10))
+
+    def save_score_in_DB(self):
+        database_file = open("resources/database.txt","a")
+        database_file.write(str(self.snake.length) + "\n")
+        database_file.close()
+
+    def best_score(self):
+        database_file = open("resources/database.txt","r")
+        liste_score = []
+        for number in database_file:
+            liste_score.append(int(number)) 
+        database_file.close()
+        return max(liste_score)
 
     def is_collision(self,x1, y1, x2, y2):
         if x1 >= x2 and x1 < x2 + SIZE:
