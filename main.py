@@ -95,12 +95,19 @@ class Game:
 
                             if event.key == K_ESCAPE:
                                 self.pause = True
-                        else:
-                            pass
-                        
 
                 elif event.type == QUIT:
                     running = False
+
+            if self.mode2:
+                if self.snake.direction == 'down':
+                    self.snake.move_right()
+                elif self.snake.direction == 'right':
+                    self.snake.move_up()
+                elif self.snake.direction == 'up':
+                    self.snake.move_left()
+                elif self.snake.direction == 'left':
+                    self.snake.move_down()
 
             if self.pause:
                 self.game_paused()
