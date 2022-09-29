@@ -29,9 +29,12 @@ class Game:
 
     def run(self): 
         running = True
+        self.menu = True
         self.pause = False
         self.over = False
         self.win = False
+        self.mode1 = False
+        self.mode2 = False
         
         while running:
 
@@ -42,35 +45,59 @@ class Game:
                         if event.key == K_ESCAPE:
                             pygame.mixer.music.unpause()
                             self.pause = False
+
                     elif self.over:
                         if event.key == K_ESCAPE:
-                            running = False
-                        
+                            self.menu = True
+                            self.over = False
+                            self.mode1 = False
+                            self.mode2 = False        
                         if event.key == K_RETURN:
                             pygame.mixer.music.unpause()
                             self.over = False
+
                     elif self.win:
                         if event.key == K_ESCAPE:
-                            running = False
-                        
+                            self.menu = True
+                            self.win = False
+                            self.mode1 = False
+                            self.mode2 = False
                         if event.key == K_RETURN:
                             pygame.mixer.music.unpause()
                             self.win = False
-                    else:
-                        if event.key == K_UP:
-                            self.snake.move_up()
 
-                        if event.key == K_DOWN:
-                            self.snake.move_down()
-
-                        if event.key == K_RIGHT:
-                            self.snake.move_right()
-
-                        if event.key == K_LEFT:
-                            self.snake.move_left()
-
+                    elif self.menu: 
                         if event.key == K_ESCAPE:
-                            self.pause = True
+                            running = False
+                        if event.key == K_RETURN:
+                            pygame.mixer.music.unpause()
+                            self.menu = False
+                            self.mode1 = True
+                        if event.key == K_a:
+                            pygame.mixer.music.unpause()
+                            self.menu = False
+                            self.mode2 = True
+                            print("botttttttttttttttttttt")
+
+                    else:
+                        if self.mode1:
+                            if event.key == K_UP:
+                                self.snake.move_up()
+
+                            if event.key == K_DOWN:
+                                self.snake.move_down()
+
+                            if event.key == K_RIGHT:
+                                self.snake.move_right()
+
+                            if event.key == K_LEFT:
+                                self.snake.move_left()
+
+                            if event.key == K_ESCAPE:
+                                self.pause = True
+                        else:
+                            pass
+                        
 
                 elif event.type == QUIT:
                     running = False
@@ -78,14 +105,29 @@ class Game:
             if self.pause:
                 self.game_paused()
 
-            if not self.pause and not self.over and not self.win:
+            if self.menu:
+                self.main_menu()
+
+            if not self.pause and not self.over and not self.win and not self.menu:
                 self.play()
 
             
 
             time.sleep(0.17)
 
-
+    def main_menu(self):
+        self.render_background()
+        font = pygame.font.SysFont('arial',30)
+        line1 = font.render(f"MAIN MENU", True, (255,255,255))
+        self.surface.blit(line1, (200,300))
+        line2 = font.render(f"The best score is {self.best_score()}", True, (255,255,255))
+        self.surface.blit(line2, (200,350))
+        line3 = font.render(f"Press Enter to start Normal Game. Press A to start Bot Game", True, (255,255,255))
+        self.surface.blit(line3, (200,400))
+        line4 = font.render(f"Press ESC to exit game", True, (255,255,255))
+        self.surface.blit(line4, (200,450))
+        pygame.display.flip()
+        pygame.mixer.music.pause()
 
     def play(self):
         self.render_background()
@@ -126,8 +168,8 @@ class Game:
         self.surface.blit(line1, (200,300))
         line2 = font.render(f"The best score is {self.best_score()}", True, (255,255,255))
         self.surface.blit(line2, (200,350))
-        line2 = font.render(f"To play again press Enter. To exit press ESC", True, (255,255,255))
-        self.surface.blit(line2, (200,400))
+        line3 = font.render(f"Press Enter to restart Game. Press ESC to go to main menu", True, (255,255,255))
+        self.surface.blit(line3, (200,400))
 
         pygame.display.flip()
         pygame.mixer.music.pause()
@@ -144,8 +186,8 @@ class Game:
         self.surface.blit(line1, (200,300))
         line2 = font.render(f"The best score is {self.best_score()}", True, (255,255,255))
         self.surface.blit(line2, (200,350))
-        line2 = font.render(f"To play again press Enter. To exit press ESC", True, (255,255,255))
-        self.surface.blit(line2, (200,400))
+        line3 = font.render(f"Press Enter to restart Game. Press ESC to go to main menu", True, (255,255,255))
+        self.surface.blit(line3, (200,400))
 
         pygame.display.flip()
         pygame.mixer.music.pause()
