@@ -7,7 +7,7 @@ from pygame.locals import *
 
 SIZE = 40
 BACKGROUND_COLOR = (110, 110, 5)
-SIZE_SCREEN = (1000,800) #multiple de 40 obligatoire 1000 800
+SIZE_SCREEN = (240,240) #multiple de 40 obligatoire 1000 800
 
 class Game:
     def __init__(self):
@@ -35,6 +35,7 @@ class Game:
         self.win = False
         self.mode1 = False
         self.mode2 = False
+        self.init_bot = True
         
         while running:
 
@@ -77,7 +78,6 @@ class Game:
                             pygame.mixer.music.unpause()
                             self.menu = False
                             self.mode2 = True
-                            print("botttttttttttttttttttt")
 
                     else:
                         if self.mode1:
@@ -100,14 +100,7 @@ class Game:
                     running = False
 
             if self.mode2:
-                if self.snake.direction == 'down':
-                    self.snake.move_right()
-                elif self.snake.direction == 'right':
-                    self.snake.move_up()
-                elif self.snake.direction == 'up':
-                    self.snake.move_left()
-                elif self.snake.direction == 'left':
-                    self.snake.move_down()
+                self.IA_BOT()
 
             if self.pause:
                 self.game_paused()
@@ -116,11 +109,12 @@ class Game:
                 self.main_menu()
 
             if not self.pause and not self.over and not self.win and not self.menu:
+                print("x = " + str(self.snake.x[0]) + " y = " +str(self.snake.y[0]) + " dir = " + self.snake.direction)
                 self.play()
 
             
 
-            time.sleep(0.17)
+            time.sleep(0.05)
 
     def main_menu(self):
         self.render_background()
@@ -152,18 +146,21 @@ class Game:
         #snake colliding with itself
         for i in range(3,self.snake.length):
             if self.is_collision(self.snake.x[0], self.snake.y[0], self.snake.x[i], self.snake.y[i]):
+                print("dead on him")
                 self.play_sound("crash")
                 self.game_over()
                 break
 
         # snake colliding with the boundries of the window
         if not (0 <= self.snake.x[0] < SIZE_SCREEN[0] and 0 <= self.snake.y[0] < SIZE_SCREEN[1]):
+            print("dead by collision")
             self.play_sound('crash')
             self.game_over()
 
         # victory
-        if self.snake.length == int((SIZE_SCREEN[0]*SIZE_SCREEN[1])/(SIZE*SIZE)):    
-            self.play_sound("win")
+        if self.snake.length == int((SIZE_SCREEN[0]*SIZE_SCREEN[1])/(SIZE*SIZE)):
+            self.play_sound('win')
+            print("win")
             self.game_win()
 
     def game_over(self):
@@ -255,6 +252,35 @@ class Game:
     def reset(self):
         self.snake = Snake(self.surface,2)
         self.apple = Apple(self.surface)
+        self.init_bot = True
+
+    def IA_BOT(self):
+        #print("x = " + str(self.snake.x[0]) + " y = " + str(self.snake.y[0]) + " dir = " + self.snake.direction)
+        if self.snake.x[0] == 0 and self.snake.y[0] == 40 and self.snake.direction == 'down':
+            self.init_bot = False
+
+        if self.init_bot == True:
+            if self.snake.direction == 'down':
+                self.snake.move_right()
+            elif self.snake.direction == 'right':
+                self.snake.move_up()
+            elif self.snake.y[0] == 0 and self.snake.x[0] != 0:
+                self.snake.move_left()
+            elif self.snake.x[0] == 0:
+                self.snake.move_down()
+        else:
+                if self.snake.y[0] == int(SIZE_SCREEN[1]-SIZE) and self.snake.x[0] == self.snake.x[1]:
+                    self.snake.move_right()
+                elif self.snake.direction == 'right' and self.snake.y[0] == int(SIZE_SCREEN[1]-SIZE):
+                    self.snake.move_up()
+                elif self.snake.y[0] == SIZE and self.snake.x[0] == self.snake.x[1] and self.snake.x[0] != 0 and self.snake.x[0] != int(SIZE_SCREEN[0]-SIZE):
+                    self.snake.move_right()
+                elif self.snake.direction == 'right' and self.snake.y[0] == SIZE:
+                    self.snake.move_down()
+                elif self.snake.y[0] == 0 and self.snake.x[0] == int(SIZE_SCREEN[0]-SIZE):
+                    self.snake.move_left()
+                elif self.snake.y[0] == 0 and self.snake.x[0] == 0:
+                    self.snake.move_down()
 
 class Snake:
     def __init__(self, parent_screen, length):
@@ -328,33 +354,6 @@ class Apple:
                 if self.x == snake.x[i] and self.y == snake.y[i]:
                     available_place = False
         self.draw()
-
-class Button():
-    def __init__(self,x,y,image,scale):
-        width = image.get_width()
-        height = image.get_height()
-        self.image = pygame.transform.scale(image, (int(width * scale), int(height * scale)))
-        self.rect = self.image.get_rect()
-        self.rect.topleft = (x,y)
-        self.clicked = False
-
-    def draw(self, surface):
-        action = False
-        pos = pygame.mouse.get_pos()
-        if self.rect.collidepoint(pos):
-            if pygame.mouse.get_pressed()[0] == 1 and self.clicked == False:
-                self.clicked = True
-                action = True
-
-        if pygame.mouse.get_pressed()[0] == 0:
-            self.clicked = False
-
-        surface.blit(self.image, (self.rect.x, self.rect.y))
-        pygame.display.flip()
-        return action
-    
-    def tamere(self):
-        pass
 
 if __name__ == "__main__":
     game = Game()
