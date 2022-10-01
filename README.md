@@ -2,6 +2,6 @@
  Developing a snake game on Python to learn basics
 
  Choses à faire :
- respawn apple
- win case
+ mettre plus de data (dimmension, date, score, temps)
+ bug son (peut pas jouer 2 sons à la fois : utilisation channel)
  redimentioner lorsque qu'on modifie la taille de l'écran

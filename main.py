@@ -7,7 +7,7 @@ from pygame.locals import *
 
 SIZE = 40
 BACKGROUND_COLOR = (110, 110, 5)
-SIZE_SCREEN = (240,240) #multiple de 40 obligatoire 1000 800
+SIZE_SCREEN = (320,240) #multiple de 40 obligatoire 1000 800
 
 class Game:
     def __init__(self):
@@ -114,7 +114,7 @@ class Game:
 
             
 
-            time.sleep(0.05)
+            time.sleep(0.025)
 
     def main_menu(self):
         self.render_background()
@@ -129,6 +129,7 @@ class Game:
         self.surface.blit(line4, (200,450))
         pygame.display.flip()
         pygame.mixer.music.pause()
+        self.time = datetime.now()
 
     def play(self):
         self.render_background()
@@ -218,6 +219,8 @@ class Game:
         pygame.display.flip()
 
     def save_score_in_DB(self):
+        print(str(datetime.now() - self.time))
+        
         database_file = open("resources/database.txt","a")
         database_file.write(str(self.snake.length) + "\n")
         database_file.close()
