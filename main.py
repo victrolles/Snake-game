@@ -1,13 +1,14 @@
 import pygame
 import time
 import random
+import pandas as pd
 
-from datetime import datetime
+from datetime import datetime, date
 from pygame.locals import *
 
 SIZE = 40
 BACKGROUND_COLOR = (110, 110, 5)
-SIZE_SCREEN = (320,240) #multiple de 40 obligatoire 1000 800
+SIZE_SCREEN = (1040,800) #multiple de 40 obligatoire 1000 800
 
 class Game:
     def __init__(self):
@@ -25,6 +26,8 @@ class Game:
         self.apple = Apple(self.surface)
         self.apple.draw()
 
+        self.stat = Stat()
+
 
 
     def run(self): 
@@ -33,8 +36,7 @@ class Game:
         self.pause = False
         self.over = False
         self.win = False
-        self.mode1 = False
-        self.mode2 = False
+        self.mode = ""
         self.init_bot = True
         
         while running:
@@ -51,8 +53,7 @@ class Game:
                         if event.key == K_ESCAPE:
                             self.menu = True
                             self.over = False
-                            self.mode1 = False
-                            self.mode2 = False        
+                            self.mode = False      
                         if event.key == K_RETURN:
                             pygame.mixer.music.unpause()
                             self.over = False
@@ -61,8 +62,7 @@ class Game:
                         if event.key == K_ESCAPE:
                             self.menu = True
                             self.win = False
-                            self.mode1 = False
-                            self.mode2 = False
+                            self.mode = False
                         if event.key == K_RETURN:
                             pygame.mixer.music.unpause()
                             self.win = False
@@ -73,14 +73,14 @@ class Game:
                         if event.key == K_RETURN:
                             pygame.mixer.music.unpause()
                             self.menu = False
-                            self.mode1 = True
+                            self.mode = "human"
                         if event.key == K_a:
                             pygame.mixer.music.unpause()
                             self.menu = False
-                            self.mode2 = True
+                            self.mode = "bot1"
 
                     else:
-                        if self.mode1:
+                        if self.mode == "human":
                             if event.key == K_UP:
                                 self.snake.move_up()
 
@@ -99,8 +99,8 @@ class Game:
                 elif event.type == QUIT:
                     running = False
 
-            if self.mode2:
-                self.IA_BOT()
+            if self.mode == "bot1":
+                self.IA_BOT1()
 
             if self.pause:
                 self.game_paused()
@@ -109,7 +109,6 @@ class Game:
                 self.main_menu()
 
             if not self.pause and not self.over and not self.win and not self.menu:
-                print("x = " + str(self.snake.x[0]) + " y = " +str(self.snake.y[0]) + " dir = " + self.snake.direction)
                 self.play()
 
             
@@ -121,7 +120,7 @@ class Game:
         font = pygame.font.SysFont('arial',30)
         line1 = font.render(f"MAIN MENU", True, (255,255,255))
         self.surface.blit(line1, (200,300))
-        line2 = font.render(f"The best score is {self.best_score()}", True, (255,255,255))
+        line2 = font.render(f"The best score is {self.stat.best_score()}", True, (255,255,255))
         self.surface.blit(line2, (200,350))
         line3 = font.render(f"Press Enter to start Normal Game. Press A to start Bot Game", True, (255,255,255))
         self.surface.blit(line3, (200,400))
@@ -165,13 +164,13 @@ class Game:
             self.game_win()
 
     def game_over(self):
-        self.save_score_in_DB()
+        self.save_score_in_DB(False)
         
         self.render_background()
         font = pygame.font.SysFont('arial',30)
         line1 = font.render(f"Game is over! Your score is {self.snake.length}", True, (255,255,255))
         self.surface.blit(line1, (200,300))
-        line2 = font.render(f"The best score is {self.best_score()}", True, (255,255,255))
+        line2 = font.render(f"The best score is {self.stat.best_score()}", True, (255,255,255))
         self.surface.blit(line2, (200,350))
         line3 = font.render(f"Press Enter to restart Game. Press ESC to go to main menu", True, (255,255,255))
         self.surface.blit(line3, (200,400))
@@ -183,13 +182,13 @@ class Game:
         self.reset()
 
     def game_win(self):
-        self.save_score_in_DB()
+        self.save_score_in_DB(True)
         
         self.render_background()
         font = pygame.font.SysFont('arial',30)
         line1 = font.render(f"You win!!!!!!!! Your score is {self.snake.length}", True, (255,255,255))
         self.surface.blit(line1, (200,300))
-        line2 = font.render(f"The best score is {self.best_score()}", True, (255,255,255))
+        line2 = font.render(f"The best score is {self.stat.best_score()}", True, (255,255,255))
         self.surface.blit(line2, (200,350))
         line3 = font.render(f"Press Enter to restart Game. Press ESC to go to main menu", True, (255,255,255))
         self.surface.blit(line3, (200,400))
@@ -218,20 +217,18 @@ class Game:
         self.surface.blit(score,(800,10))
         pygame.display.flip()
 
-    def save_score_in_DB(self):
-        print(str(datetime.now() - self.time))
-        
-        database_file = open("resources/database.txt","a")
-        database_file.write(str(self.snake.length) + "\n")
-        database_file.close()
-
-    def best_score(self):
-        database_file = open("resources/database.txt","r")
-        liste_score = []
-        for number in database_file:
-            liste_score.append(int(number)) 
-        database_file.close()
-        return max(liste_score)
+    def save_score_in_DB(self,Win):
+        addstat = {
+            'Scores':[self.snake.length],
+            'Dates':[date.today().strftime("%d/%m/%y")],
+            'Time':[(datetime.now() - self.time).seconds],
+            'Dim X':[SIZE_SCREEN[0]],
+            'Dim Y':[SIZE_SCREEN[1]],
+            'Users':[self.mode],
+            'Win':[Win],
+        }
+        df1 = pd.DataFrame(addstat)
+        df1.to_csv("resources/database.csv", header=False, index=False, mode='a')
 
     def is_collision(self,x1, y1, x2, y2):
         if x1 >= x2 and x1 < x2 + SIZE:
@@ -257,8 +254,8 @@ class Game:
         self.apple = Apple(self.surface)
         self.init_bot = True
 
-    def IA_BOT(self):
-        #print("x = " + str(self.snake.x[0]) + " y = " + str(self.snake.y[0]) + " dir = " + self.snake.direction)
+    def IA_BOT1(self):
+        #print("x = " + str(self.snake.x[0]) + " y = " +str(self.snake.y[0]) + " dir = " + self.snake.direction)
         if self.snake.x[0] == 0 and self.snake.y[0] == 40 and self.snake.direction == 'down':
             self.init_bot = False
 
@@ -357,6 +354,14 @@ class Apple:
                 if self.x == snake.x[i] and self.y == snake.y[i]:
                     available_place = False
         self.draw()
+
+class Stat:
+    def __init__(self):
+        self.df = pd.read_csv('resources/database.csv')
+
+    def best_score(self):
+        return self.df["Scores"].max()
+
 
 if __name__ == "__main__":
     game = Game()

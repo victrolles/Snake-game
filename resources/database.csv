@@ -1,1 +1,6 @@
-﻿Score,Date,Time,Dim X,Dim Y,User,Win
+Scores,Dates,Time,Dim X,Dim Y,Users,Win
+26,01/10/22,13,240,240,bot1,False
+34,01/10/22,32,240,240,bot1,False
+36,01/10/22,53,240,240,bot1,True
+2,01/10/22,0,1040,800,human,False
+3,01/10/22,1,1040,800,human,False
