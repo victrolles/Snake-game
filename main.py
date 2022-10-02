@@ -109,7 +109,7 @@ class Game:
 
             
 
-            time.sleep(0.025)
+            time.sleep(0.15)
 
     def main_menu(self):
         self.render_background()
