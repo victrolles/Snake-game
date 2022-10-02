@@ -26,10 +26,6 @@ class Game:
         self.apple = Apple(self.surface)
         self.apple.draw()
 
-        self.stat = Stat()
-
-
-
     def run(self): 
         running = True
         self.menu = True
@@ -120,7 +116,7 @@ class Game:
         font = pygame.font.SysFont('arial',30)
         line1 = font.render(f"MAIN MENU", True, (255,255,255))
         self.surface.blit(line1, (200,300))
-        line2 = font.render(f"The best score is {self.stat.best_score()}", True, (255,255,255))
+        line2 = font.render(f"The best score is ", True, (255,255,255))
         self.surface.blit(line2, (200,350))
         line3 = font.render(f"Press Enter to start Normal Game. Press A to start Bot Game", True, (255,255,255))
         self.surface.blit(line3, (200,400))
@@ -165,15 +161,29 @@ class Game:
 
     def game_over(self):
         self.save_score_in_DB(False)
-        
+        self.stat = Stat()
         self.render_background()
         font = pygame.font.SysFont('arial',30)
-        line1 = font.render(f"Game is over! Your score is {self.snake.length}", True, (255,255,255))
-        self.surface.blit(line1, (200,300))
-        line2 = font.render(f"The best score is {self.stat.best_score()}", True, (255,255,255))
-        self.surface.blit(line2, (200,350))
-        line3 = font.render(f"Press Enter to restart Game. Press ESC to go to main menu", True, (255,255,255))
-        self.surface.blit(line3, (200,400))
+        line1 = font.render(f"Game is over!", True, (255,255,255))
+        self.surface.blit(line1, (300,200))
+        line2 = font.render(f"Your score : {self.stat.last_game_stat('Scores')}", True, (255,255,255))
+        self.surface.blit(line2, (200,300))
+        line3 = font.render(f"Your time : {self.stat.last_game_stat('Time')}", True, (255,255,255))
+        self.surface.blit(line3, (200,350))
+        line4 = font.render(f"Dim : ({self.stat.last_game_stat('Dim X')}px, {self.stat.last_game_stat('Dim Y')}px)", True, (255,255,255))
+        self.surface.blit(line4, (200,400))
+        line5 = font.render(f"Player : {self.stat.last_game_stat('Users')}", True, (255,255,255))
+        self.surface.blit(line5, (200,450))
+        line6 = font.render(f"Best score : {self.stat.best_score_stat('Scores')}", True, (255,255,255))
+        self.surface.blit(line6, (500,300))
+        line7 = font.render(f"Best score time : {self.stat.best_score_stat('Time')}", True, (255,255,255))
+        self.surface.blit(line7, (500,350))
+        line8 = font.render(f"Best score Dim : ({self.stat.best_score_stat('Dim X')}px, {self.stat.best_score_stat('Dim Y')}px)", True, (255,255,255))
+        self.surface.blit(line8, (500,400))
+        line9 = font.render(f"Best score player : {self.stat.best_score_stat('Users')}", True, (255,255,255))
+        self.surface.blit(line9, (500,450))
+        line10 = font.render(f"Press Enter to restart Game. Press ESC to go to main menu", True, (255,255,255))
+        self.surface.blit(line10, (200,550))
 
         pygame.display.flip()
         pygame.mixer.music.pause()
@@ -188,7 +198,7 @@ class Game:
         font = pygame.font.SysFont('arial',30)
         line1 = font.render(f"You win!!!!!!!! Your score is {self.snake.length}", True, (255,255,255))
         self.surface.blit(line1, (200,300))
-        line2 = font.render(f"The best score is {self.stat.best_score()}", True, (255,255,255))
+        line2 = font.render(f"The best score is ", True, (255,255,255))
         self.surface.blit(line2, (200,350))
         line3 = font.render(f"Press Enter to restart Game. Press ESC to go to main menu", True, (255,255,255))
         self.surface.blit(line3, (200,400))
@@ -359,9 +369,11 @@ class Stat:
     def __init__(self):
         self.df = pd.read_csv('resources/database.csv')
 
-    def best_score(self):
-        return self.df["Scores"].max()
+    def best_score_stat(self,name):
+        return self.df[f"{name}"][self.df[self.df["Scores"]==self.df["Scores"].max()].index[0]]
 
+    def last_game_stat(self,name):
+        return self.df[f"{name}"][self.df.tail(1).index[0]]
 
 if __name__ == "__main__":
     game = Game()
