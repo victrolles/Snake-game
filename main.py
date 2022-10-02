@@ -7,7 +7,7 @@ from datetime import datetime, date
 from pygame.locals import *
 
 SIZE = 40
-DELAY = 0.01
+DELAY = 0.15
 BACKGROUND_COLOR = (110, 110, 5)
 SIZE_SCREEN = (1040,800) #multiple de 40 obligatoire 1040 800
 
@@ -249,6 +249,8 @@ class Game:
         font = pygame.font.SysFont('arial',30)
         score = font.render(f"Score: {self.snake.length}", True, (255,255,255))
         self.surface.blit(score,(800,10))
+        score2 = font.render(f"Timer: {datetime.now().second}", True, (255,255,255))
+        self.surface.blit(score2,(800,50))
         pygame.display.flip()
 
     def save_score_in_DB(self,Win):
@@ -256,7 +258,7 @@ class Game:
             'Scores':[self.snake.length],
             'Dates':[date.today().strftime("%d/%m/%y")],
             'Time':[(datetime.now() - self.time).seconds],
-            'Speed':[1/DELAY],
+            'Speed':[int(1/DELAY)],
             'Dim X':[SIZE_SCREEN[0]],
             'Dim Y':[SIZE_SCREEN[1]],
             'Users':[self.mode],
