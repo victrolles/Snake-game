@@ -7,8 +7,9 @@ from datetime import datetime, date
 from pygame.locals import *
 
 SIZE = 40
+DELAY = 0.01
 BACKGROUND_COLOR = (110, 110, 5)
-SIZE_SCREEN = (1040,800) #multiple de 40 obligatoire 1000 800
+SIZE_SCREEN = (1040,800) #multiple de 40 obligatoire 1040 800
 
 class Game:
     def __init__(self):
@@ -109,19 +110,30 @@ class Game:
 
             
 
-            time.sleep(0.15)
+            time.sleep(DELAY)
 
     def main_menu(self):
         self.render_background()
+        self.stat = Stat()
+
         font = pygame.font.SysFont('arial',30)
         line1 = font.render(f"MAIN MENU", True, (255,255,255))
-        self.surface.blit(line1, (200,300))
-        line2 = font.render(f"The best score is ", True, (255,255,255))
-        self.surface.blit(line2, (200,350))
-        line3 = font.render(f"Press Enter to start Normal Game. Press A to start Bot Game", True, (255,255,255))
-        self.surface.blit(line3, (200,400))
-        line4 = font.render(f"Press ESC to exit game", True, (255,255,255))
-        self.surface.blit(line4, (200,450))
+        self.surface.blit(line1, (300,200))
+        line2 = font.render(f"Best score : {self.stat.best_score_stat('Scores')}", True, (255,255,255))
+        self.surface.blit(line2, (200,300))
+        line3 = font.render(f"Best score time : {self.stat.best_score_stat('Time')}", True, (255,255,255))
+        self.surface.blit(line3, (200,350))
+        line4 = font.render(f"Best score Dim : ({self.stat.best_score_stat('Dim X')}px, {self.stat.best_score_stat('Dim Y')}px)", True, (255,255,255))
+        self.surface.blit(line4, (500,300))
+        line5 = font.render(f"Best score player : {self.stat.best_score_stat('Users')}", True, (255,255,255))
+        self.surface.blit(line5, (500,350))
+        line55 = font.render(f"Best score speed : {self.stat.best_score_stat('Speed')}", True, (255,255,255))
+        self.surface.blit(line55, (200,400))
+        line6 = font.render(f"Press Enter to start Normal Game. Press A to start Bot Game", True, (255,255,255))
+        self.surface.blit(line6, (200,500))
+        line7 = font.render(f"Press ESC to exit game", True, (255,255,255))
+        self.surface.blit(line7, (200,550))
+
         pygame.display.flip()
         pygame.mixer.music.pause()
         self.time = datetime.now()
@@ -163,6 +175,7 @@ class Game:
         self.save_score_in_DB(False)
         self.stat = Stat()
         self.render_background()
+
         font = pygame.font.SysFont('arial',30)
         line1 = font.render(f"Game is over!", True, (255,255,255))
         self.surface.blit(line1, (300,200))
@@ -174,6 +187,8 @@ class Game:
         self.surface.blit(line4, (200,400))
         line5 = font.render(f"Player : {self.stat.last_game_stat('Users')}", True, (255,255,255))
         self.surface.blit(line5, (200,450))
+        line55 = font.render(f"Speed : {self.stat.last_game_stat('Speed')}", True, (255,255,255))
+        self.surface.blit(line55, (200,500))
         line6 = font.render(f"Best score : {self.stat.best_score_stat('Scores')}", True, (255,255,255))
         self.surface.blit(line6, (500,300))
         line7 = font.render(f"Best score time : {self.stat.best_score_stat('Time')}", True, (255,255,255))
@@ -182,30 +197,39 @@ class Game:
         self.surface.blit(line8, (500,400))
         line9 = font.render(f"Best score player : {self.stat.best_score_stat('Users')}", True, (255,255,255))
         self.surface.blit(line9, (500,450))
+        line99 = font.render(f"Best score player : {self.stat.best_score_stat('Speed')}", True, (255,255,255))
+        self.surface.blit(line99, (500,500))
         line10 = font.render(f"Press Enter to restart Game. Press ESC to go to main menu", True, (255,255,255))
-        self.surface.blit(line10, (200,550))
+        self.surface.blit(line10, (200,600))
 
         pygame.display.flip()
         pygame.mixer.music.pause()
-
         self.over = True
         self.reset()
 
     def game_win(self):
         self.save_score_in_DB(True)
+        self.stat = Stat()
         
         self.render_background()
         font = pygame.font.SysFont('arial',30)
-        line1 = font.render(f"You win!!!!!!!! Your score is {self.snake.length}", True, (255,255,255))
-        self.surface.blit(line1, (200,300))
-        line2 = font.render(f"The best score is ", True, (255,255,255))
-        self.surface.blit(line2, (200,350))
-        line3 = font.render(f"Press Enter to restart Game. Press ESC to go to main menu", True, (255,255,255))
-        self.surface.blit(line3, (200,400))
+        line1 = font.render(f"You win!!!!!!!!", True, (255,255,255))
+        self.surface.blit(line1, (300,200))
+        line2 = font.render(f"Your score : {self.stat.last_game_stat('Scores')}", True, (255,255,255))
+        self.surface.blit(line2, (200,300))
+        line3 = font.render(f"Your time : {self.stat.last_game_stat('Time')}", True, (255,255,255))
+        self.surface.blit(line3, (200,350))
+        line4 = font.render(f"Dim : ({self.stat.last_game_stat('Dim X')}px, {self.stat.last_game_stat('Dim Y')}px)", True, (255,255,255))
+        self.surface.blit(line4, (500,300))
+        line5 = font.render(f"Player : {self.stat.last_game_stat('Users')}", True, (255,255,255))
+        self.surface.blit(line5, (500,350))
+        line55 = font.render(f"Speed : {self.stat.last_game_stat('Speed')}", True, (255,255,255))
+        self.surface.blit(line55, (200,400))
+        line6 = font.render(f"Press Enter to restart Game. Press ESC to go to main menu", True, (255,255,255))
+        self.surface.blit(line6, (200,500))
 
         pygame.display.flip()
         pygame.mixer.music.pause()
-
         self.win = True
         self.reset()
 
@@ -232,6 +256,7 @@ class Game:
             'Scores':[self.snake.length],
             'Dates':[date.today().strftime("%d/%m/%y")],
             'Time':[(datetime.now() - self.time).seconds],
+            'Speed':[1/DELAY],
             'Dim X':[SIZE_SCREEN[0]],
             'Dim Y':[SIZE_SCREEN[1]],
             'Users':[self.mode],

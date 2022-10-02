@@ -1,23 +1,5 @@
-Scores,Dates,Time,Dim X,Dim Y,Users,Win
-26,01/10/22,13,240,240,bot1,False
-34,01/10/22,32,240,240,bot1,False
-36,01/10/22,53,240,240,bot1,True
-2,01/10/22,0,1040,800,human,False
-3,01/10/22,1,1040,800,human,False
-4,02/10/22,6,1040,800,human,False
-2,02/10/22,2,1040,800,human,False
-4,02/10/22,8,1040,800,human,False
-2,02/10/22,1,1040,800,human,False
-3,02/10/22,15,1040,800,human,False
-2,02/10/22,50,1040,800,human,False
-3,02/10/22,6,1040,800,human,False
-2,02/10/22,18,1040,800,human,False
-3,02/10/22,10,1040,800,human,False
-13,02/10/22,114,1040,800,human,False
-2,02/10/22,3,1040,800,human,False
-7,02/10/22,16,1040,800,human,False
-4,02/10/22,9,1040,800,human,False
-4,02/10/22,7,1040,800,human,False
-3,02/10/22,1,1040,800,human,False
-4,02/10/22,8,1040,800,human,False
-18,02/10/22,10,240,240,bot1,False
+Scores,Dates,Time,Speed,Dim X,Dim Y,Users,Win
+6,01/10/22,12,100,1000,800,Bot1,True
+54,02/10/22,28,100.0,320,320,bot1,False
+64,02/10/22,63,100.0,320,320,bot1,True
+2,02/10/22,0,100.0,1040,800,human,False
